@@ -1,8 +1,8 @@
-streamlit
 fastapi
 uvicorn
+python-multipart
 opencv-python-headless
 numpy
-pillow
 requests
-libgl1-mesa-glx
+streamlit
+pillow
