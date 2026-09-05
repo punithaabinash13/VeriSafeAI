@@ -6,14 +6,13 @@ st.set_page_config(page_title="VeriSafe AI", page_icon="🛡️", layout="wide")
 
 BACKEND_URL = os.environ.get("BACKEND_API_URL", "https://verisafeai-1.onrender.com")
 
-# 6 Language Localization Dictionary
 I18N = {
     "English": {
         "title": "🛡️ VeriSafe AI",
         "subtitle": "Multi-Modal Deepfake & Document Fraud Detection Platform (94.4% Accuracy)",
         "tabs": ["📷 Photo Analysis", "🎥 Video Analysis", "🎙️ Audio Analysis", "📄 Document Verification"],
         "upload": "Upload file for forensic verification:",
-        "btn": "🚀 Run Deepfake Check",
+        "btn": "🚀 Run VeriSafe AI Check",
         "orig": "Original Score",
         "fake": "Fake Score",
         "location": "Exact Modified Location",
@@ -70,7 +69,7 @@ I18N = {
     },
     "Kannada (ಕನ್ನಡ)": {
         "title": "🛡️ VeriSafe AI",
-        "subtitle": "ಬಹು-ಮಾದರಿ ಡಿಪ್‌ಫೇಕ್ እና ದಾಖಲೆ ವಂಚನೆ ಪತ್ತೆ ವೇದಿಕೆ (94.4% ನಿಖರತೆ)",
+        "subtitle": "ಬಹು-ಮಾದರಿ ಡಿಪ್‌ಫೇಕ್ ಮತ್ತು ದಾಖಲೆ ವಂಚನೆ ಪತ್ತೆ ವೇದಿಕೆ (94.4% ನಿಖರತೆ)",
         "tabs": ["📷 ಫೋಟೋ ವಿಶ್ಲೇಷಣೆ", "🎥 ವೀಡಿಯೊ ವಿಶ್ಲೇಷಣೆ", "🎙️ ಆಡಿಯೋ ವಿಶ್ಲೇಷಣೆ", "📄 ದಾಖಲೆ ಪರಿಶೀಲನೆ"],
         "upload": "ಪರಿಶೀಲನೆಗಾಗಿ ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ:",
         "btn": "🚀 ತನಿಖೆ ನಡೆಸಿ",
@@ -82,8 +81,8 @@ I18N = {
     }
 }
 
-st.sidebar.header("🌐 Language / ভাষা / மொழி")
-selected_lang = st.sidebar.selectbox("Select Language:", list(I18N.keys()))
+st.sidebar.header("🌐 Select Language / மொழி")
+selected_lang = st.sidebar.selectbox("Language / மொழி:", list(I18N.keys()))
 t = I18N[selected_lang]
 
 st.title(t["title"])
@@ -124,7 +123,7 @@ def render_detection_ui(endpoint: str, file_types: list, media_kind: str):
                             m3.metric(t["acc"], data["accuracy_confidence"])
                             
                             st.warning(f"🎯 **{t['location']}:** `{data['modified_location']}`")
-                            st.code(f"SHA-256 Ledger: {data['forensic_hash']}")
+                            st.code(f"SHA-256 Hash: {data['forensic_hash']}")
                         else:
                             st.error(f"Server Error {res.status_code}: {res.text}")
                     except Exception as e:
