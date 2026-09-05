@@ -6,12 +6,11 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
-    title="VeriSafe AI Forensic Platform",
-    description="Multi-Modal Engine for Deepfake & Document Fraud Detection",
+    title="VeriSafe AI Forensic Engine",
+    description="Backend API for Deepfake & Document Fraud Detection",
     version="2026.2"
 )
 
-# Enable CORS for Streamlit Access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,7 +20,6 @@ app.add_middleware(
 )
 
 def compute_calibrated_metrics(score_raw: float):
-    """Calibrates liveness/variance scores toward a 94.4% accuracy model standard."""
     base_accuracy = 94.4
     if score_raw >= 100.0:
         original_pct = base_accuracy
@@ -52,7 +50,6 @@ async def analyze_photo(file: UploadFile = File(...)):
         contents = await file.read()
         sha256_hash = hashlib.sha256(contents).hexdigest()
         
-        # Safe memory decoding for OpenCV
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
@@ -66,7 +63,6 @@ async def analyze_photo(file: UploadFile = File(...)):
         is_fake, original_pct, fake_pct = compute_calibrated_metrics(laplacian_var)
         latency = round((time.time() - start_time) * 1000, 2)
         
-        # Quad-segment localized variance tracking
         h, w = gray.shape
         grid_h, grid_w = h // 3, w // 3
         min_var = float('inf')
