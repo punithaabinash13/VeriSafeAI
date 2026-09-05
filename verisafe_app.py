@@ -4,7 +4,7 @@ import streamlit as st
 
 st.set_page_config(page_title="VeriSafe AI", page_icon="🛡️", layout="wide")
 
-BACKEND_URL = os.environ.get("BACKEND_API_URL", "https://verisafeai-1.onrender.com")
+BACKEND_URL = "https://verisafeai-1.onrender.com"
 
 I18N = {
     "English": {
@@ -116,12 +116,12 @@ def render_detection_ui(endpoint: str, file_types: list, media_kind: str):
                                 st.error(f"🚨 **{t['verdict']}:** {data['verdict']}")
                             else:
                                 st.success(f"✅ **{t['verdict']}:** {data['verdict']}")
-                            
+
                             m1, m2, m3 = st.columns(3)
                             m1.metric(t["orig"], data["original_percentage"])
                             m2.metric(t["fake"], data["fake_percentage"])
                             m3.metric(t["acc"], data["accuracy_confidence"])
-                            
+
                             st.warning(f"🎯 **{t['location']}:** `{data['modified_location']}`")
                             st.code(f"SHA-256 Hash: {data['forensic_hash']}")
                         else:
