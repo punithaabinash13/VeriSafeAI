@@ -30,7 +30,7 @@ def compute_calibrated_metrics(score_raw: float):
         fake_pct = max(fake_pct, 5.6)
         original_pct = round(100.0 - fake_pct, 1)
         is_fake = fake_pct > 50.0
-        
+
     return is_fake, original_pct, fake_pct
 
 @app.get("/")
@@ -45,29 +45,29 @@ def health_check():
 async def analyze_photo(file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Invalid image file format.")
-    
+
     try:
         contents = await file.read()
         sha256_hash = hashlib.sha256(contents).hexdigest()
-        
+
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
+
         if img is None:
             raise HTTPException(status_code=400, detail="Corrupted image bytes.")
-            
+
         start_time = time.time()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         laplacian_var = float(cv2.Laplacian(gray, cv2.CV_64F).var())
-        
+
         is_fake, original_pct, fake_pct = compute_calibrated_metrics(laplacian_var)
         latency = round((time.time() - start_time) * 1000, 2)
-        
+
         h, w = gray.shape
         grid_h, grid_w = h // 3, w // 3
         min_var = float('inf')
         loc_x, loc_y = "Center", "Middle"
-        
+
         y_labels, x_labels = ["Top", "Middle", "Bottom"], ["Left", "Center", "Right"]
         for i in range(3):
             for j in range(3):
