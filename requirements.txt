@@ -5,3 +5,4 @@ opencv-python-headless
 numpy
 pillow
 requests
+libgl1-mesa-glx
