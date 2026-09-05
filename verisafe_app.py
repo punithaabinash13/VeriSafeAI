@@ -1,137 +1,151 @@
 import os
+import requests
 import streamlit as st
 
-# Page Configuration
 st.set_page_config(
-    page_title="VeriSafe AI - Deepfake & Document Fraud Detection",
+    page_title="VeriSafe AI - தடயவியல் ஆய்வு தளம்",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
+try:
+    API_URL = st.secrets["RENDER_API_URL"].rstrip("/")
+except Exception:
+    API_URL = "http://127.0.0.1:8000"
+
 st.markdown("""
     <style>
-        .stApp {
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        div[data-testid="stSidebar"] {
-            background-color: #1e293b;
-            color: #ffffff;
-        }
+        .stApp { background-color: #0f172a; color: #f8fafc; }
+        div[data-testid="stSidebar"] { background-color: #1e293b; color: #ffffff; }
         .metric-card {
             background-color: #1e293b;
             border: 1px solid #334155;
-            padding: 1rem;
+            padding: 1.2rem;
             border-radius: 0.75rem;
             text-align: center;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Controls
-st.sidebar.title("🛡️ VeriSafe AI Controls")
+st.sidebar.title("🛡️ VeriSafe AI")
+st.sidebar.caption("இந்திய மொழிகளுக்கான போலி ஆவண & குரல் கண்டறிதல் தளம்")
 st.sidebar.markdown("---")
 
 app_mode = st.sidebar.selectbox(
-    "Select Interface View",
-    ["Interactive Dashboard", "Forensic API Tester", "System Logs & Metrics"]
+    "பொருளடக்கம்",
+    ["முகப்பு (Dashboard)", "ஆவண பரிசோதனை (Document OCR)", "குரல் பரிசோதனை (Audio Clone)", "சிஸ்டம் நிலை (Diagnostics)"]
 )
 
 st.sidebar.markdown("---")
-st.sidebar.info("""
-**Platform Specs:**
-- **Execution:** Edge ONNX INT8 CPU
-- **OCR Scripts:** Tamil, Malayalam, Kannada, Telugu, Hindi, English
-- **Target Latency:** < 180 ms
-""")
+st.sidebar.info(f"**இணைக்கப்பட்டுள்ள API:**\n`{API_URL}`")
 
-if app_mode == "Interactive Dashboard":
-    st.title("🛡️ VeriSafe AI: Multi-Lingual Document & Deepfake Forensic Platform")
-    st.caption("Pan-Indian Regional Forensic Intelligence supporting Tamil, English, Hindi, Malayalam, Telugu, and Kannada.")
+if app_mode == "முகப்பு (Dashboard)":
+    st.title("🛡️ VeriSafe AI: பன்மொழி தடயவியல் ஆய்வு தளம்")
+    st.caption("தமிழ், ஆங்கிலம், ஹிந்தி, மலையாளம், தெலுங்கு மற்றும் கன்னட மொழிகளுக்கான ஆவண சோதனை.")
     
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.markdown("<div class='metric-card'><h4>OCR Latency</h4><h2 style='color:#0ea5e9;'>85 ms</h2></div>", unsafe_allow_html=True)
+        st.markdown("<div class='metric-card'><h4>OCR வேகம்</h4><h2 style='color:#0ea5e9;'>85 ms</h2></div>", unsafe_allow_html=True)
     with col2:
-        st.markdown("<div class='metric-card'><h4>Audio Scan</h4><h2 style='color:#10b981;'>140 ms</h2></div>", unsafe_allow_html=True)
+        st.markdown("<div class='metric-card'><h4>ஆடியோ ஸ்கேன்</h4><h2 style='color:#10b981;'>140 ms</h2></div>", unsafe_allow_html=True)
     with col3:
-        st.markdown("<div class='metric-card'><h4>Accuracy</h4><h2 style='color:#f59e0b;'>99.4%</h2></div>", unsafe_allow_html=True)
+        st.markdown("<div class='metric-card'><h4>துல்லியம்</h4><h2 style='color:#f59e0b;'>99.4%</h2></div>", unsafe_allow_html=True)
     with col4:
-        st.markdown("<div class='metric-card'><h4>Quantization</h4><h2 style='color:#38bdf8;'>INT8 CPU</h2></div>", unsafe_allow_html=True)
+        st.markdown("<div class='metric-card'><h4>செயலாக்கம்</h4><h2 style='color:#38bdf8;'>INT8 CPU</h2></div>", unsafe_allow_html=True)
 
     st.markdown("---")
-    st.subheader("Land Record Inspection Simulator")
+    st.subheader("நில ஆவண மாதிரி சோதனை")
     
-    doc_type = st.radio("Select Jurisdiction", ["Tamil Nadu (Patta/Chitta)", "Kerala (Revenue)", "North India (Khatauni)"], horizontal=True)
+    doc_type = st.radio("மாநில வருவாய்த்துறை ஆவண வகை", ["தமிழ்நாடு (பட்டா/சிட்டா)", "கேரளா (E-Rekhanangal)", "வட இந்தியா (Khatauni)"], horizontal=True)
     
-    if doc_type == "Tamil Nadu (Patta/Chitta)":
-        st.error("⚠️ TAMPERING DETECTED")
+    if doc_type == "தமிழ்நாடு (பட்டா/சிட்டா)":
+        st.error("⚠️ ஆவண மாற்றம் செய்யப்பட்டுள்ளது (TAMPERING DETECTED)")
         st.json({
-            "Jurisdiction": "Tamil Nadu Revenue Dept",
-            "District": "Coimbatore",
-            "Patta Number": "849201 [ALTERED]",
-            "Status": "Tampered - Layer Anomaly at Survey ID field"
+            "துறை": "தமிழ்நாடு வருவாய்த்துறை",
+            "மாவட்டம்": "கோயம்புத்தூர்",
+            "பட்டா எண்": "849201 [மாற்றப்பட்டது]",
+            "நிலை": "போலியானது - சர்வே எண் பகுதியில் திருத்தம் உள்ளது",
+            "SHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         })
-    elif doc_type == "Kerala (Revenue)":
-        st.success("✅ DOCUMENT VERIFIED")
+    elif doc_type == "கேரளா (E-Rekhanangal)":
+        st.success("✅ உண்மை ஆவணம் (AUTHENTIC)")
         st.json({
-            "Jurisdiction": "Kerala Land Revenue",
-            "District": "Palakkad",
-            "Thandaper No": "40291",
-            "Status": "Authentic - Signature & Seal Authenticated"
+            "துறை": "கேரளா நில வருவாய்த்துறை",
+            "மாவட்டம்": "பாலக்காடு",
+            "தண்டப்பேர் எண்": "40291",
+            "நிலை": "உண்மையானது - கையொப்பம் மற்றும் முத்திரை சரிபார்க்கப்பட்டது",
+            "SHA256": "811c9dc50b2811211110543e4130006571556018a3a0e8832a88463133f9f303"
         })
     else:
-        st.error("⚠️ TAMPERING DETECTED")
+        st.error("⚠️ ஆவண மாற்றம் செய்யப்பட்டுள்ளது (TAMPERING DETECTED)")
         st.json({
-            "Jurisdiction": "Uttar Pradesh Bhulekh",
-            "District": "Varanasi",
-            "Khatauni No": "00342 [ALTERED]",
-            "Status": "Font Mismatch - Digit Re-sampling Detected"
+            "துறை": "உத்தரப் பிரதேசம் பூலேக்",
+            "மாவட்டம்": "வாரணாசி",
+            "கதவுனி எண்": "00342 [மாற்றப்பட்டது]",
+            "நிலை": "எழுத்துரு மாற்றம் செய்யப்பட்டுள்ளது",
+            "SHA256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
         })
 
-elif app_mode == "Forensic API Tester":
-    st.title("⚡ VeriSafe Forensic API Tester")
-    st.write("Upload media files to run live inference on quantized ONNX CPU models.")
+elif app_mode == "ஆவண பரிசோதனை (Document OCR)":
+    st.title("📄 நில ஆவண தடயவியல் பரிசோதனை")
+    st.write("உங்கள் பட்டா/சிட்டா அல்லது நில ஆவணங்களைப் பதிவேற்றி நேரலையாக பரிசோதிக்கவும்.")
 
-    tab1, tab2 = st.tabs(["📄 Document OCR Inspector", "🎙️ Audio Clone Detector"])
+    uploaded_doc = st.file_uploader("ஆவணத்தைப் பதிவேற்றவும் (PDF, JPG, PNG)", type=["pdf", "png", "jpg", "jpeg"])
+    lang = st.selectbox("மொழியைத் தேர்ந்தெடுக்கவும்", ["Tamil", "Malayalam", "Kannada", "Telugu", "Hindi", "English"])
+    
+    if uploaded_doc and st.button("ஆவணத்தை ஆய்வு செய்"):
+        with st.spinner("Render API மூலம் பரிசோதிக்கப்படுகிறது..."):
+            try:
+                files = {"file": (uploaded_doc.name, uploaded_doc.getvalue(), uploaded_doc.type)}
+                data = {"script_language": lang}
+                
+                response = requests.post(f"{API_URL}/api/v1/inspect-document", files=files, data=data, timeout=30)
+                
+                if response.status_code == 200:
+                    res_data = response.json()
+                    st.success("பரிசோதனை முடிந்தது!")
+                    st.markdown(f"**பாதுகாப்பு SHA-256 ஹாஷ்:** `{res_data.get('sha256_hash')}`")
+                    st.markdown(f"**எடுத்துக்கொண்ட நேரம்:** `{res_data.get('processing_time_ms')}`")
+                    st.json(res_data)
+                else:
+                    st.error(f"பிழை: {response.status_code} - {response.text}")
+            except Exception as e:
+                st.error(f"Render API-ஐ தொடர்பு கொள்ள முடியவில்லை: {e}")
 
-    with tab1:
-        st.subheader("Multi-Lingual Land Record & Certificate Analysis")
-        uploaded_doc = st.file_uploader("Upload Document (PDF, PNG, JPG)", type=["pdf", "png", "jpg"])
-        lang = st.selectbox("Select Script Focus", ["Tamil", "Malayalam", "Kannada", "Telugu", "Hindi", "English"])
-        
-        if uploaded_doc and st.button("Run Forensic OCR"):
-            st.success("Document Analyzed Successfully!")
-            st.json({
-                "document_name": uploaded_doc.name,
-                "detected_script": lang,
-                "tampering_detected": True,
-                "confidence_score": 0.994,
-                "altered_fields": ["Patta Number / Survey ID"],
-                "processing_time_ms": 85.4
-            })
+elif app_mode == "குரல் பரிசோதனை (Audio Clone)":
+    st.title("🎙️ AI குரல் போலி கண்டறிதல்")
+    st.write("AI மூலம் உருவாக்கப்பட்ட செயற்கை குரல்களை கண்டறியும் பகுதி.")
 
-    with tab2:
-        st.subheader("Multi-Accent Voice Clone Isolation")
-        uploaded_audio = st.file_uploader("Upload Audio Sample (WAV, MP3)", type=["wav", "mp3"])
-        
-        if uploaded_audio and st.button("Analyze Audio Spectrum"):
-            st.success("Spectral Scan Complete!")
-            st.json({
-                "file_name": uploaded_audio.name,
-                "voice_clone_detected": False,
-                "acoustic_confidence": 0.989,
-                "synthetic_artifacts_frequency": "None",
-                "processing_time_ms": 140.2
-            })
+    uploaded_audio = st.file_uploader("ஆடியோ கோப்பைப் பதிவேற்றவும் (WAV, MP3)", type=["wav", "mp3"])
+    
+    if uploaded_audio and st.button("குரலை ஆய்வு செய்"):
+        with st.spinner("ஆடியோ அலைவரிசை பரிசோதிக்கப்படுகிறது..."):
+            try:
+                files = {"file": (uploaded_audio.name, uploaded_audio.getvalue(), uploaded_audio.type)}
+                response = requests.post(f"{API_URL}/api/v1/analyze-audio", files=files, timeout=30)
+                
+                if response.status_code == 200:
+                    res_data = response.json()
+                    st.success("குரல் ஆய்வு முடிந்தது!")
+                    st.markdown(f"**பாதுகாப்பு SHA-256 ஹாஷ்:** `{res_data.get('sha256_hash')}`")
+                    st.markdown(f"**எடுத்துக்கொண்ட நேரம்:** `{res_data.get('processing_time_ms')}`")
+                    st.json(res_data)
+                else:
+                    st.error(f"பிழை: {response.status_code} - {response.text}")
+            except Exception as e:
+                st.error(f"Render API-ஐ தொடர்பு கொள்ள முடியவில்லை: {e}")
 
-elif app_mode == "System Logs & Metrics":
-    st.title("📊 Edge ONNX Runtime Metrics")
-    st.code("""
-[INFO] ONNX Execution Provider: CPUExecutionProvider (INT8 Quantized)
-[INFO] Model Loaded: verisafe_multiscript_ocr_v2.onnx (24.2 MB)
-[INFO] Model Loaded: verisafe_voice_isolation_v1.onnx (18.6 MB)
-[SUCCESS] Pipeline initialized. Target latency: <200ms
-    """, language="bash")
+elif app_mode == "சிஸ்டம் நிலை (Diagnostics)":
+    st.title("📊 சர்வர் இணைப்பு நிலை")
+    
+    if st.button("API-ஐ சோதித்துப் பார் (Ping)"):
+        try:
+            res = requests.get(f"{API_URL}/", timeout=10)
+            if res.status_code == 200:
+                st.success("Backend API வெற்றிகரமாக இயங்குகிறது!")
+                st.json(res.json())
+            else:
+                st.warning(f"நிலைக் குறியீடு: {res.status_code}")
+        except Exception as e:
+            st.error(f"இணைப்புத் தோல்வி: {e}")
